@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portfolio - About Me</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9fafb; color: #333; }
+    header { background: #111827; color: white; padding: 1rem; text-align: center; }
+    nav a { color: white; margin: 0 10px; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 20px; max-width: 900px; margin: auto; }
+    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    footer { text-align: center; padding: 15px; background: #111827; color: white; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>About Me</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Who Am I?</h2>
+      <p>Hi! I'm [Your Name], a Computer Science student passionate about software development, AI, and cybersecurity. I love creating projects that solve real-world problems.</p>
+    </div>
+    <div class="card">
+      <h3>Skills</h3>
+      <ul>
+        <li>⚡ HTML, CSS, JavaScript</li>
+        <li>⚡ Python, Java, C++</li>
+        <li>⚡ SQL & Databases</li>
+        <li>⚡ Problem Solving & Algorithms</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Contact</h3>
+      <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+      <p>LinkedIn: <a href="#" target="_blank">linkedin.com/in/yourprofile</a></p>
+      <p>GitHub: <a href="#" target="_blank">github.com/yourprofile</a></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© <span id="year"></span> My Portfolio</p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
