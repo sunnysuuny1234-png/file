@@ -1,283 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Modern single-file HTML template" />
-  <title>My Single-File Website</title>
+  <meta charset="UTF-8">
+  <title>Builder Pattern Clone Apps</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --muted: #9ca3af;
-      --text: #f9fafb;
-      --brand: #6366f1;
-      --brand-2: #22d3ee;
-      --ring: rgba(99,102,241,.35);
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; scroll-behavior: smooth; }
     body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 10% -10%, rgba(99,102,241,.15), transparent 60%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(34,211,238,.15), transparent 60%), var(--bg);
-      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #222;
+      padding: 15px;
+      color: white;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #333;
+    }
+
+    .tab {
+      padding: 14px 20px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .tab:hover {
+      background: #444;
+    }
+
+    .tab.active {
+      background: #e63946;
+    }
+
+    /* App section */
+    .app-section {
+      display: none;
+      padding: 40px 20px;
+    }
+
+    .app-section.active {
+      display: block;
+    }
+
+    .app-title {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 30px;
+      color: #e63946;
+    }
+
+    /* Layout */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Builder panel */
+    .builder, .summary {
+      flex: 1;
+      min-width: 300px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .step {
+      margin: 20px 0;
+    }
+
+    .step h3 {
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    label:hover {
+      background: #f9ecec;
+    }
+
+    input[type="checkbox"], input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    /* Summary */
+    .summary h3 {
+      color: #e63946;
+    }
+
+    .order-items {
+      font-size: 14px;
+      color: #555;
       line-height: 1.6;
     }
-    a { color: inherit; text-decoration: none; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    .nav {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: saturate(140%) blur(10px);
-      background: rgba(17,24,39,.6);
-      border-bottom: 1px solid rgba(255,255,255,.06);
+
+    /* Button */
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #e63946;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
     }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .brand { font-weight: 800; letter-spacing: .2px; display: inline-flex; align-items: center; gap: .5rem; }
-    .brand-badge {
-      display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2)); font-size: 14px; font-weight: 900;
-      box-shadow: 0 8px 30px rgba(99,102,241,.35);
+
+    .submit-btn:hover {
+      background: #d62828;
     }
-    .links { display: flex; gap: 1rem; }
-    .links a { opacity: .9; padding: 10px 12px; border-radius: 10px; }
-    .links a:hover { background: rgba(255,255,255,.06); opacity: 1; }
-    .menu-button { display: none; }
-    @media (max-width: 760px) {
-      .links { display: none; }
-      .menu-button { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; opacity: .9; }
-    }
-    .mobile { display: none; padding: 10px 0 16px; }
-    .mobile a { display: block; padding: 12px; border-radius: 10px; }
-    .mobile a:hover { background: rgba(255,255,255,.06); }
-    .hero {
-      padding: 72px 0 48px; text-align: center;
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(255,255,255,.06); padding: 8px 12px; border-radius: 999px; font-size: .9rem; color: var(--muted);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .title {
-      font-size: clamp(2rem, 4vw + 1rem, 3.5rem); line-height: 1.1; margin: 16px 0 10px; font-weight: 850;
-      letter-spacing: -.02em;
-    }
-    .subtitle { color: var(--muted); max-width: 740px; margin: 0 auto 24px; font-size: 1.05rem; }
-    .cta {
-      display: inline-flex; gap: .75rem; flex-wrap: wrap; justify-content: center;
-      margin-top: 12px;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: .5rem; padding: 12px 16px; border-radius: 12px; font-weight: 700;
-      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.06); cursor: pointer;
-      transition: transform .06s ease, box-shadow .2s ease;
-      box-shadow: 0 8px 30px rgba(0,0,0,.2), inset 0 0 0 0px var(--ring);
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn.primary {
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      border-color: transparent; color: #0b1020;
-      box-shadow: 0 12px 40px var(--ring);
-    }
-    .grid {
-      display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); margin: 28px 0 6px;
-    }
-    @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr);} }
-    @media (max-width: 640px) { .grid { grid-template-columns: 1fr;} }
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px; padding: 18px;
-      box-shadow: 0 8px 30px rgba(0,0,0,.2);
-      transition: transform .1s ease, border-color .2s ease, box-shadow .2s ease;
-      height: 100%;
-    }
-    .card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.14); box-shadow: 0 12px 40px rgba(0,0,0,.25); }
-    .card h3 { margin: 8px 0 6px; font-size: 1.1rem; }
-    .muted { color: var(--muted); font-size: .95rem; }
-    .section { padding: 42px 0; }
-    .section h2 { font-size: 1.6rem; margin: 0 0 12px; }
-    .feature-list { display: grid; gap: 10px; margin-top: 8px; }
-    .feature-list li { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); padding: 10px 12px; border-radius: 12px; }
-    .footer { padding: 28px 0 48px; color: var(--muted); text-align: center; border-top: 1px solid rgba(255,255,255,.08); }
-    .kbd {
-      display: inline-block; padding: 2px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.2);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem;
-    }
-    .input, .textarea {
-      width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06); color: var(--text); outline: none;
-    }
-    .textarea { min-height: 120px; resize: vertical; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 760px) { .row { grid-template-columns: 1fr; } }
-    .notice {
-      background: linear-gradient(90deg, rgba(99,102,241,.1), rgba(34,211,238,.08));
-      border: 1px dashed rgba(99,102,241,.4);
-      padding: 12px 14px; border-radius: 12px; color: var(--muted);
-    }
-    /* Tiny utility classes */
-    .mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
-    .mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}
-    .center{display:flex;align-items:center;justify-content:center}
-    .right{display:flex;justify-content:flex-end}
   </style>
 </head>
 <body>
-  <nav class="nav">
-    <div class="container nav-inner">
-      <div class="brand">
-        <span class="brand-badge">★</span> <span>MySite</span>
-      </div>
-      <div class="links" id="desktopLinks">
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <button class="menu-button" id="menuButton" aria-label="Menu" aria-expanded="false">☰ Menu</button>
-    </div>
-    <div class="container mobile" id="mobileMenu" role="menu">
-      <a href="#features" role="menuitem">Features</a>
-      <a href="#about" role="menuitem">About</a>
-      <a href="#contact" role="menuitem">Contact</a>
-      <a href="#faq" role="menuitem">FAQ</a>
-    </div>
-  </nav>
 
-  <header class="hero container">
-    <span class="badge">New • Polished single-file template</span>
-    <h1 class="title">Build something beautiful — fast.</h1>
-    <p class="subtitle">A modern, responsive HTML template with elegant defaults, soft-glow cards, and no build tools. Copy once, customize forever.</p>
-    <div class="cta">
-      <a class="btn primary" href="#features">Explore Features →</a>
-      <a class="btn" href="#contact">Get in touch</a>
-    </div>
-  </header>
+  <!-- Navbar -->
+  <div class="navbar">🌟 Builder Pattern Clone Apps</div>
 
-  <main class="container">
-    <section id="features" class="section">
-      <h2>Features</h2>
-      <p class="muted">Clean styles, semantic HTML, and utility classes for quick edits.</p>
-      <div class="grid mt-3">
-        <article class="card">
-          <h3>Responsive by default</h3>
-          <p class="muted">Grid-based layout adapts from 1–3 columns. No frameworks required.</p>
-        </article>
-        <article class="card">
-          <h3>Single-file simplicity</h3>
-          <p class="muted">All CSS and JS inline. Drop it into any hosting and you're done.</p>
-        </article>
-        <article class="card">
-          <h3>Accessible patterns</h3>
-          <p class="muted">Keyboard-friendly nav and ARIA attributes sprinkled in.</p>
-        </article>
-      </div>
-    </section>
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showApp('food-app')">🍕 Food Delivery</div>
+    <div class="tab" onclick="showApp('ride-app')">🚖 Ride-Hailing</div>
+    <div class="tab" onclick="showApp('ecommerce-app')">💻 E-commerce</div>
+    <div class="tab" onclick="showApp('bank-app')">🏦 Banking</div>
+  </div>
 
-    <section id="about" class="section">
-      <h2>About</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Why this template?</h3>
-          <p class="muted">It’s a great starting point for portfolios, product pages, hackathon demos, or internal tools.</p>
-          <ul class="feature-list mt-2">
-            <li>Sticky translucent navbar</li>
-            <li>Smooth scrolling</li>
-            <li>Soft shadows, rounded corners</li>
-            <li>Utility classes for spacing</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Quick tips</h3>
-          <ul class="feature-list">
-            <li>Replace <span class="kbd">&lt;title&gt;</span> and the hero text.</li>
-            <li>Swap brand colors in <span class="kbd">:root</span>.</li>
-            <li>Use <span class="kbd">.grid</span>, <span class="kbd">.card</span>, and <span class="kbd">.row</span> to layout content.</li>
-          </ul>
-          <div class="notice mt-3">Pro tip: Press <span class="kbd">Ctrl</span> + <span class="kbd">F</span> and search for “TODO” to personalize.</div>
-        </article>
-        <article class="card">
-          <h3>Example form</h3>
-          <div class="row">
-            <label>
-              <span class="muted">Name</span>
-              <input class="input" placeholder="Batti chandan Singh " />
-            </label>
-            <label>
-              <span class="muted">Email</span>
-              <input type="email" class="input" placeholder="chandansingh@gmail.com" />
-            </label>
-          </div>
-          <label class="mt-3">
-            <span class="muted">Message</span>
-            <textarea class="textarea" placeholder="Say hello..."></textarea>
-          </label>
-          <div class="right mt-3">
-            <button class="btn primary" type="button" onclick="alert('Thanks! This is a demo.')">Send</button>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="faq" class="section">
-      <h2>FAQ</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Is this really just one file?</h3>
-          <p class="muted">Yep. No npm, no bundlers—just open in a browser or ship to static hosting.</p>
-        </article>
-        <article class="card">
-          <h3>How do I change colors?</h3>
-          <p class="muted">Edit the CSS variables in <span class="kbd">:root</span> at the top of the file.</p>
-        </article>
-        <article class="card">
-          <h3>Can I add sections?</h3>
-          <p class="muted">Copy a <span class="kbd">.section</span> block and tweak the content. The layout just works.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p class="muted">Drop a note—this form is a demo. Hook it to your backend or Formspree/Netlify later.</p>
-      <div class="row">
-        <label>
-          <span class="muted">Subject</span>
-          <input class="input" placeholder="What’s up?" />
-        </label>
-        <label>
-          <span class="muted">Phone</span>
-          <input class="input" placeholder="+91 98765 43210" />
-        </label>
-      </div>
-      <label class="mt-3">
-        <span class="muted">Details</span>
-        <textarea class="textarea" placeholder="Tell me more..."></textarea>
-      </label>
-      <div class="right mt-3">
-        <button class="btn" type="button" onclick="window.location.hash='#top'">Back to top ↑</button>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
+  <!-- Food Delivery App -->
+  <div class="app-section active" id="food-app">
+    <div class="app-title">🍕 Food Delivery App - Pizza Builder</div>
     <div class="container">
-      © <span id="year"></span> Your Name • Built with ❤️
+      <div class="builder">
+        <h2>Build Your Pizza</h2>
+        <div class="step">
+          <h3>Step 1: Choose Size</h3>
+          <label><input type="radio" name="size"> Small</label>
+          <label><input type="radio" name="size"> Medium</label>
+          <label><input type="radio" name="size"> Large</label>
+        </div>
+        <div class="step">
+          <h3>Step 2: Choose Crust</h3>
+          <label><input type="radio" name="crust"> Thin Crust</label>
+          <label><input type="radio" name="crust"> Cheese Burst</label>
+          <label><input type="radio" name="crust"> Pan</label>
+        </div>
+        <div class="step">
+          <h3>Step 3: Add Toppings</h3>
+          <label><input type="checkbox"> Pepperoni</label>
+          <label><input type="checkbox"> Olives</label>
+          <label><input type="checkbox"> Jalapenos</label>
+          <label><input type="checkbox"> Mushrooms</label>
+          <label><input type="checkbox"> Extra Cheese</label>
+        </div>
+        <div class="step">
+          <h3>Step 4: Delivery Option</h3>
+          <label><input type="radio" name="delivery"> Pickup</label>
+          <label><input type="radio" name="delivery"> Home Delivery</label>
+        </div>
+        <button class="submit-btn">Finalize Pizza ✅</button>
+      </div>
+      <div class="summary">
+        <h3>📝 Order Summary</h3>
+        <div class="order-items">
+          <p><b>Size:</b> Medium</p>
+          <p><b>Crust:</b> Thin Crust</p>
+          <p><b>Toppings:</b> Pepperoni, Olives</p>
+          <p><b>Delivery:</b> Home Delivery</p>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
 
+  <!-- Ride-Hailing App -->
+  <div class="app-section" id="ride-app">
+    <div class="app-title">🚖 Ride-Hailing App - Ride Booking Builder</div>
+    <div class="container">
+      <div class="builder">
+        <h2>Book Your Ride</h2>
+        <div class="step">
+          <h3>Step 1: Pickup Location</h3>
+          <label><input type="radio" name="pickup"> Home</label>
+          <label><input type="radio" name="pickup"> Office</label>
+          <label><input type="radio" name="pickup"> Airport</label>
+        </div>
+        <div class="step">
+          <h3>Step 2: Drop Location</h3>
+          <label><input type="radio" name="drop"> Mall</label>
+          <label><input type="radio" name="drop"> Station</label>
+          <label><input type="radio" name="drop"> Hotel</label>
+        </div>
+        <div class="step">
+          <h3>Step 3: Vehicle Type</h3>
+          <label><input type="radio" name="vehicle"> Sedan</label>
+          <label><input type="radio" name="vehicle"> SUV</label>
+          <label><input type="radio" name="vehicle"> Auto</label>
+        </div>
+        <div class="step">
+          <h3>Step 4: Payment Method</h3>
+          <label><input type="radio" name="payment"> Cash</label>
+          <label><input type="radio" name="payment"> UPI</label>
+          <label><input type="radio" name="payment"> Card</label>
+        </div>
+        <button class="submit-btn">Book Ride 🚖</button>
+      </div>
+      <div class="summary">
+        <h3>📝 Ride Summary</h3>
+        <div class="order-items">
+          <p><b>Pickup:</b> Home</p>
+          <p><b>Drop:</b> Airport</p>
+          <p><b>Vehicle:</b> Sedan</p>
+          <p><b>Payment:</b> UPI</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E-commerce App -->
+  <div class="app-section" id="ecommerce-app">
+    <div class="app-title">💻 E-commerce App - Laptop Builder</div>
+    <div class="container">
+      <div class="builder">
+        <h2>Customize Laptop</h2>
+        <div class="step">
+          <h3>Step 1: RAM</h3>
+          <label><input type="radio" name="ram"> 8GB</label>
+          <label><input type="radio" name="ram"> 16GB</label>
+          <label><input type="radio" name="ram"> 32GB</label>
+        </div>
+        <div class="step">
+          <h3>Step 2: Storage</h3>
+          <label><input type="radio" name="storage"> 512GB SSD</label>
+          <label><input type="radio" name="storage"> 1TB SSD</label>
+          <label><input type="radio" name="storage"> 2TB SSD</label>
+        </div>
+        <div class="step">
+          <h3>Step 3: Graphics</h3>
+          <label><input type="radio" name="gpu"> Integrated</label>
+          <label><input type="radio" name="gpu"> NVIDIA RTX</label>
+          <label><input type="radio" name="gpu"> AMD Radeon</label>
+        </div>
+        <div class="step">
+          <h3>Step 4: Warranty</h3>
+          <label><input type="radio" name="warranty"> 1 Year</label>
+          <label><input type="radio" name="warranty"> 2 Years</label>
+          <label><input type="radio" name="warranty"> 3 Years</label>
+        </div>
+        <button class="submit-btn">Add to Cart 🛒</button>
+      </div>
+      <div class="summary">
+        <h3>📝 Laptop Summary</h3>
+        <div class="order-items">
+          <p><b>RAM:</b> 16GB</p>
+          <p><b>Storage:</b> 1TB SSD</p>
+          <p><b>Graphics:</b> NVIDIA RTX</p>
+          <p><b>Warranty:</b> 2 Years</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banking App -->
+  <div class="app-section" id="bank-app">
+    <div class="app-title">🏦 Banking App - Loan Application Builder</div>
+    <div class="container">
+      <div class="builder">
+        <h2>Apply for Loan</h2>
+        <div class="step">
+          <h3>Step 1: Customer Type</h3>
+          <label><input type="radio" name="customer"> Individual</label>
+          <label><input type="radio" name="customer"> Business</label>
+        </div>
+        <div class="step">
+          <h3>Step 2: Loan Type</h3>
+          <label><input type="radio" name="loan"> Home Loan</label>
+          <label><input type="radio" name="loan"> Personal Loan</label>
+          <label><input type="radio" name="loan"> Car Loan</label>
+        </div>
+        <div class="step">
+          <h3>Step 3: Interest Plan</h3>
+          <label><input type="radio" name="interest"> Fixed</label>
+          <label><input type="radio" name="interest"> Floating</label>
+        </div>
+        <div class="step">
+          <h3>Step 4: Documents</h3>
+          <label><input type="checkbox"> ID Proof</label>
+          <label><input type="checkbox"> Address Proof</label>
+          <label><input type="checkbox"> Income Proof</label>
+        </div>
+        <button class="submit-btn">Submit Application 📝</button>
+      </div>
+      <div class="summary">
+        <h3>📝 Loan Summary</h3>
+        <div class="order-items">
+          <p><b>Customer:</b> Individual</p>
+          <p><b>Loan:</b> Home Loan</p>
+          <p><b>Interest:</b> Fixed</p>
+          <p><b>Documents:</b> ID Proof, Income Proof</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for Tabs -->
   <script>
-    // Mobile menu
-    const btn = document.getElementById('menuButton');
-    const menu = document.getElementById('mobileMenu');
-    btn?.addEventListener('click', () => {
-      const showing = menu.style.display === 'block';
-      menu.style.display = showing ? 'none' : 'block';
-      btn.setAttribute('aria-expanded', (!showing).toString());
-    });
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    function showApp(appId) {
+      // Hide all sections
+      document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+      // Remove active tab
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      // Show selected
+      document.getElementById(appId).classList.add('active');
+      event.target.classList.add('active');
+    }
   </script>
 </body>
 </html>
