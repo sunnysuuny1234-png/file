@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pizza Builder Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header><h1>Pizza Builder — Builder + Singleton Demo</h1></header>
+
+    <main class="grid">
+      <section class="builder">
+        <h2>Build your pizza</h2>
+
+        <label>Size:
+          <select id="size">
+            <option>Small</option>
+            <option selected>Medium</option>
+            <option>Large</option>
+          </select>
+        </label>
+
+        <fieldset>
+          <legend>Toppings</legend>
+          <label><input type="checkbox" class="topping" value="Cheese"> Cheese</label>
+          <label><input type="checkbox" class="topping" value="Pepperoni"> Pepperoni</label>
+          <label><input type="checkbox" class="topping" value="Mushrooms"> Mushrooms</label>
+          <label><input type="checkbox" class="topping" value="Olives"> Olives</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Add-ons</legend>
+          <label><input type="checkbox" class="addon" value="Extra Sauce"> Extra Sauce</label>
+          <label><input type="checkbox" class="addon" value="Extra Cheese"> Extra Cheese</label>
+        </fieldset>
+
+        <label>Delivery:
+          <select id="delivery">
+            <option>Pickup</option>
+            <option selected>Home Delivery</option>
+            <option>Takeaway</option>
+          </select>
+        </label>
+
+        <div class="buttons">
+          <button id="addBtn">Add to Cart</button>
+          <button id="clearBtn">Clear Form</button>
+        </div>
+      </section>
+
+      <aside class="cart">
+        <h2>Cart / Orders</h2>
+        <ul id="ordersList"></ul>
+        <div class="cart-buttons">
+          <button id="placeAllBtn">Place All Orders</button>
+          <button id="showJsonBtn">Show JSON</button>
+        </div>
+        <pre id="jsonOutput" class="hidden"></pre>
+      </aside>
+    </main>
+
+    <footer>Demo: Builder pattern (PizzaBuilder) + Singleton (OrderManager)</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

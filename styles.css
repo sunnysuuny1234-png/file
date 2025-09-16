@@ -1,0 +1,17 @@
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+body{margin:0;background:#f7f7f8;color:#111}
+.container{max-width:1000px;margin:24px auto;padding:16px}
+header h1{margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
+.builder, .cart{background:white;padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+fieldset{margin:10px 0;padding:10px;border-radius:6px}
+label{display:block;margin:8px 0}
+.buttons{margin-top:12px}
+button{padding:8px 12px;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff}
+button:hover{box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cart-buttons{margin-top:12px;display:flex;gap:8px}
+#ordersList{list-style:none;padding:0;margin:0}
+.order-item{padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.order-item small{display:block;color:#666}
+.hidden{display:none}
+footer{margin-top:12px;color:#666}
